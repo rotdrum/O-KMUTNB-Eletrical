@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'ภาควิชาเทคโนโลยีวิศวกรรมไฟฟ้า') }}</title>
+    <link rel="icon" href="{{asset('img/logo.png')}}" type="image/png" sizes="16x16">
+
+    {{-- Sweet alert 2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <!-- JQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/imageSlideShow.js') }}"></script>
+    <script src="{{ asset('js/navbarResponsive.js') }}"></script>
+    <script src="{{ asset('js/imageUploadPreview.js') }}"></script>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
+    {{-- Font Awesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+
+    <!-- Styles CSS -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    {{-- Stlye slick --}}
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+
+        {{-- Sweet Alert 2 --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+</head>
+
+<body>
+    {{-- button back to top --}}
+    <a class="back-to-top" href="#">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    {{-- nav --}}
+    <div class="nav">
+        <div class="nav-container">
+        <div class="nav-left">
+            <a href="{{route('index')}}">
+            <img src="{{asset('img/logo.png')}}">
+            </a>
+            <div class="nl-title">
+            <h2><a href="{{route('index')}}">ภาควิชาเทคโนโลยีวิศวกรรมไฟฟ้า</a></h2>
+            <h4><a href="{{route('index')}}">วิทยาลัยเทคโนโลยีอุตสาหกรรม</a></h4>
+            </div>
+        </div>
+        <div class="nav-right">
+            @if ( empty(Auth::user()->id) )           
+                <a href="{{route('login')}}"><i class="fas fa-user"></i>เข้าสู่ระบบ</a>
+                <a onclick="myFunction()" class="aj">บุคลากร</a>
+            @else 
+                <a href="{{route('editProfile')}}"><i class="fas fa-user"></i>{{ Auth::user()->tname }}{{ Auth::user()->fname }} {{ Auth::user()->lname }}</a>
+                <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                document.getElementById('logout-form').submit();" class="aj">ออกจากระบบ</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            @endif
+        </div>
+        </div>
+    </div>
+
+    {{-- nav-menu --}}
+    <div class="nav-menu">
+        <div class="nm-container">
+            <ul class="menu">
+                @if ( empty(Auth::user()->id) )           
+                    <li><a href="{{route('index')}}"><i class="fas fa-home"></i>หน้าแรก</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i>เกี่ยวกับภาควิชา</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('aboutDepartment')}}">ประวัติความเป็นมา</a></li>
+                            <li><a href="{{route('mission')}}">พันธกิจ/วิสัยทัศน์/อัตลักษณ์</a></li>
+                            <li><a href="{{route('symbol')}}">สัญลักษณ์</a></li>
+                            <li><a href="{{route('structure')}}">โครงสร้างองค์กร</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{route('activity')}}"><i class="fas fa-book"></i>กิจกรรมภาควิชา</a></li>
+                        {{-- <ul class="menu-sub">
+                            <li><a href="{{route('activityImage')}}">กิจกรรม/รูปภาพ</a></li>
+                            <li><a href="{{route('activityVideo')}}">วิดีโอเกี่ยวกับภาควิชา</a></li>
+                        </ul></li> --}}
+                    <li><a href="{{route('personal')}}"><i class="fas fa-users"></i>บุคลากร</a></li>
+                    <li><a href="#"><i class="fas fa-address-book"></i>หลักสูตร</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('industry')}}">อุตสาหกรรมศาสตรบัณฑิต </a></li>
+                            <li><a href="{{route('engineer')}}">วิศวกรรมศาสตรบัณฑิต</a></li>
+                            <li><a href="{{route('engineer-master')}}">วิศวกรรมศาสตรมหาบัณฑิต</a></li>
+                        </ul></li>
+                    <li><a href="#"><i class="fas fa-bookmark"></i>ปริญญานิพนธ์</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('researchNews')}}">ข่าวสารปริญญานิพนธ์</a></li>
+                            <li><a href="{{route('researchMethod')}}">ขั้นตอนการจัดทำปริญญานิพนธ์</a></li>
+                            <li><a href="{{route('researchFind')}}">ค้นหาปริญญานิพนธ์</a></li>
+                        </ul></li>
+                    <li><a href="#"><i class="fas fa-award"></i>สหกิจศึกษา</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('operationMethod')}}">ขั้นตอนการดำเนินการ</a></li>
+                            <li><a href="{{route('operationFind')}}">ค้นหาโครงการสหกิจ</a></li>
+                        </ul></li>
+                    <li><a href="#"><i class="fas fa-briefcase"></i>ระบบครุภัณฑ์</a></li>
+                    <li><a href="{{route('contact')}}"><i class="fas fa-phone-alt"></i>ติดต่อ</a></li>
+                @else 
+                    <li><a href="{{route('index')}}"><i class="fas fa-home"></i>หน้าแรก</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i>เกี่ยวกับภาควิชา</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('aboutDepartment')}}">ประวัติความเป็นมา</a></li>
+                            <li><a href="{{route('mission')}}">พันธกิจ/วิสัยทัศน์/อัตลักษณ์</a></li>
+                            <li><a href="{{route('symbol')}}">สัญลักษณ์</a></li>
+                            <li><a href="{{route('structure')}}">โครงสร้างองค์กร</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{route('activity')}}"><i class="fas fa-book"></i>กิจกรรมภาควิชา</a></li>
+                        {{-- <ul class="menu-sub">
+                            <li><a href="{{route('activityImage')}}">กิจกรรม/รูปภาพ</a></li>
+                            <li><a href="{{route('activityVideo')}}">วิดีโอเกี่ยวกับภาควิชา</a></li>
+                        </ul></li> --}}
+                    <li><a href="{{route('personal')}}"><i class="fas fa-users"></i>บุคลากร</a></li>
+                    <li><a href="#"><i class="fas fa-address-book"></i>หลักสูตร</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('industry')}}">อุตสาหกรรมศาสตรบัณฑิต </a></li>
+                            <li><a href="{{route('engineer')}}">วิศวกรรมศาสตรบัณฑิต</a></li>
+                            <li><a href="{{route('engineer-master')}}">วิศวกรรมศาสตรมหาบัณฑิต</a></li>
+                        </ul></li>
+                    <li><a href="#"><i class="fas fa-bookmark"></i>ปริญญานิพนธ์</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('researchNews')}}">ข่าวสารปริญญานิพนธ์</a></li>
+                            <li><a href="{{route('researchMethod')}}">ขั้นตอนการจัดทำปริญญานิพนธ์</a></li>
+                            <li><a href="{{route('researchFind')}}">ค้นหาปริญญานิพนธ์</a></li>
+                            <li><a href="{{route('researchManage')}}">จัดการข้อมูลปริญญานิพนธ์</a></li>
+                        </ul></li>
+                    <li><a href="#"><i class="fas fa-award"></i>สหกิจศึกษา</a>
+                        <ul class="menu-sub">
+                            <li><a href="{{route('operationMethod')}}">ขั้นตอนการดำเนินการ</a></li>
+                            <li><a href="{{route('operationFind')}}">ค้นหาโครงการสหกิจ</a></li>
+                            <li><a href="{{route('operationManage')}}">จัดการข้อมูลสหกิจศึกษา</a></li>
+                            <li><a href="{{route('operationUpload')}}">อัพโหลดไฟล์สหกิจศึกษา</a></li>
+                        </ul></li>
+                    <li><a href="#"><i class="fas fa-briefcase"></i>ระบบครุภัณฑ์</a></li>
+                    <li><a href="{{route('contact')}}"><i class="fas fa-phone-alt"></i>ติดต่อ</a></li>
+                @endif
+            </ul>
+        </div>
+    </div>
+    
+    {{-- Navbar Responsive --}}
+    <div class="navbarResponsive">
+        <div class="nbr-left">
+            <img src="{{asset('img/logo.png')}}" alt="">
+            <div class="nbr-title">
+                <p>ภาควิชาเทคโนโลยีวิศวกรรมไฟฟ้า</p>
+                <p>วิทยาลัยเทคโนโลยีอุตสาหกรรม</p>
+            </div>
+        </div>
+        <div class="nbr-right">
+            <div class="nav-btn">
+                <label for="nav-check">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {{-- menu before click hamberger --}}
+    <div class="nbr-link">
+        @if ( empty(Auth::user()->id) )           
+        <li>
+            <a id="link-1" class="link-main"><i class="fas fa-sign-in-alt"></i>เข้าสู่ระบบ</a>
+            <div id="link-sub-1" class="link-sub">
+                <a href="{{ route('login') }}">นักศึกษา</a>
+                <a onclick="myFunction()">บุคลากร</a>
+                <a href="{{ route('register') }}">ลงทะเบียน</a>
+            </div>
+        </li>
+        @else 
+        <li>
+            <a  class="link-main" href="{{route('editProfile')}}"><i class="fas fa-sign-in-alt"></i>{{ Auth::user()->tname }}{{ Auth::user()->fname }} {{ Auth::user()->lname }}</a>
+            <a  class="link-main" href="{{ route('logout') }}" onclick="event.preventDefault();
+                document.getElementById('logout-form').submit();"><i class="fas fa-sign-in-alt"></i>ออกจากระบบ</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            <div id="link-sub-1" class="link-sub">
+                
+            </div>
+        </li>
+        @endif
+
+
+        @if ( empty(Auth::user()->id) )           
+        <li>
+            <a id="link-2" class="link-main" href="{{route('index')}}"><i class="fas fa-home"></i>หน้าแรก</a>
+        </li>
+
+        <li>
+            <a id="link-3" class="link-main"><i class="fas fa-info-circle"></i>เกี่ยวกับภาควิชา</a>
+            <div id="link-sub-3" class="link-sub">
+                <a href="{{route('aboutDepartment')}}">ประวัติความเป็นมา</a>
+                <a href="{{route('mission')}}">พันธกิจ/วิสัยทัศน์/อัตลักษณ์</a>
+                <a href="{{route('symbol')}}">สัญลักษณ์</a>
+                <a href="{{route('structure')}}">โครงสร้างองค์กร</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-4" class="link-main" href="{{route('activity')}}"><i class="fas fa-book"></i>กิจกรรมภาควิชา</a>
+        </li>
+
+        <li>
+            <a id="link-5" class="link-main" href="{{route('personal')}}"><i class="fas fa-users"></i>บุคลากร</a>
+        </li>
+
+        <li>
+            <a id="link-6" class="link-main"><i class="fas fa-address-book"></i>หลักสูตร</a>
+            <div id="link-sub-6" class="link-sub">
+                <a href="{{route('industry')}}">อุตสาหกรรมศาสตรบัณฑิต </a>
+                <a href="{{route('engineer')}}">วิศวกรรมศาสตรบัณฑิต</a>
+                <a href="{{route('engineer-master')}}">วิศวกรรมศาสตรมหาบัณฑิต</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-7" class="link-main"><i class="fas fa-bookmark"></i>ปริญญานิพนธ์</a>
+            <div id="link-sub-7" class="link-sub">
+                <a href="{{route('researchNews')}}">ข่าวสารปริญญานิพนธ์</a>
+                <a href="{{route('researchMethod')}}">ขั้นตอนการจัดทำปริญญานิพนธ์</a>
+                <a href="{{route('researchFind')}}">ค้นหาปริญญานิพนธ์</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-8" class="link-main"><i class="fas fa-award"></i>สหกิจศึกษา</a>
+            <div id="link-sub-8" class="link-sub">
+                <a href="{{route('operationMethod')}}">ขั้นตอนการดำเนินการ</a>
+                <a href="{{route('operationFind')}}">ค้นหาโครงการสหกิจ</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-9" class="link-main"><i class="fas fa-briefcase"></i>ระบบครุภัณฑ์</a>
+            <div id="link-sub-9" class="link-sub">
+                <a href="#">Post</a>
+                <a href="#">Picture</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-10" class="link-main" href="{{route('contact')}}"><i class="fas fa-phone-alt"></i>ติดต่อ</a>
+        </li>
+        @else 
+        <li>
+            <a id="link-2" class="link-main" href="{{route('index')}}"><i class="fas fa-home"></i>หน้าแรก</a>
+        </li>
+
+        <li>
+            <a id="link-3" class="link-main"><i class="fas fa-info-circle"></i>เกี่ยวกับภาควิชา</a>
+            <div id="link-sub-3" class="link-sub">
+                <a href="{{route('aboutDepartment')}}">ประวัติความเป็นมา</a>
+                <a href="{{route('mission')}}">พันธกิจ/วิสัยทัศน์/อัตลักษณ์</a>
+                <a href="{{route('symbol')}}">สัญลักษณ์</a>
+                <a href="{{route('structure')}}">โครงสร้างองค์กร</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-4" class="link-main" href="{{route('activity')}}"><i class="fas fa-book"></i>กิจกรรมภาควิชา</a>
+        </li>
+
+        <li>
+            <a id="link-5" class="link-main" href="{{route('personal')}}"><i class="fas fa-users"></i>บุคลากร</a>
+        </li>
+
+        <li>
+            <a id="link-6" class="link-main"><i class="fas fa-address-book"></i>หลักสูตร</a>
+            <div id="link-sub-6" class="link-sub">
+                <a href="{{route('industry')}}">อุตสาหกรรมศาสตรบัณฑิต </a>
+                <a href="{{route('engineer')}}">วิศวกรรมศาสตรบัณฑิต</a>
+                <a href="{{route('engineer-master')}}">วิศวกรรมศาสตรมหาบัณฑิต</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-7" class="link-main"><i class="fas fa-bookmark"></i>ปริญญานิพนธ์</a>
+            <div id="link-sub-7" class="link-sub">
+                <a href="{{route('researchNews')}}">ข่าวสารปริญญานิพนธ์</a>
+                <a href="{{route('researchMethod')}}">ขั้นตอนการจัดทำปริญญานิพนธ์</a>
+                <a href="{{route('researchFind')}}">ค้นหาปริญญานิพนธ์</a>
+                <a href="{{route('researchManage')}}">จัดการข้อมูลปริญญานิพนธ์</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-8" class="link-main"><i class="fas fa-award"></i>สหกิจศึกษา</a>
+            <div id="link-sub-8" class="link-sub">
+                <a href="{{route('operationMethod')}}">ขั้นตอนการดำเนินการ</a>
+                <a href="{{route('operationFind')}}">ค้นหาโครงการสหกิจ</a>
+                <a href="{{route('operationManage')}}">จัดการข้อมูลสหกิจศึกษา</a>
+                <a href="{{route('operationUpload')}}">อัพโหลดไฟล์สหกิจศึกษา</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-9" class="link-main"><i class="fas fa-briefcase"></i>ระบบครุภัณฑ์</a>
+            <div id="link-sub-9" class="link-sub">
+                <a href="#">Post</a>
+                <a href="#">Picture</a>
+            </div>
+        </li>
+
+        <li>
+            <a id="link-10" class="link-main" href="{{route('contact')}}"><i class="fas fa-phone-alt"></i>ติดต่อ</a>
+        </li>
+        @endif
+     
+    </div>
+    <script>
+        function myFunction() {
+            Swal.fire({
+                icon: 'info',
+                title: 'อาจารย์/ผู้ดูแลระบบ',
+                html: '<form method="POST" action="{{ route("adminlogin") }}" >' +
+                        '@csrf' +
+                        '<input type="text" name="username" style="padding: 5px 15px;border-radius: 10px;border: 1px solid #adadad;font-size: 1rem;outline: none;margin:5px 0;" placeholder="บัญชีผู้ใช้"><br/>' +
+                      '<input type="password" name="password" style="padding: 5px 15px;border-radius: 10px;border: 1px solid #adadad;font-size: 1rem;outline: none;"  placeholder="รหัสผ่าน"><br/><br/>' +
+                      '<button  style="height: 50px;width: 200px;border: none;border-radius: 10px;font-size: 1rem;background: #1abc9c;color: #fff;cursor: pointer;transition: .3s ease;" >เข้าสู่ระบบ</button>' +
+                      '</form>' ,
+                showConfirmButton: false,
+            })
+        }
+    </script>
+    @yield('content')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+  
+</body>
+
+</html>
